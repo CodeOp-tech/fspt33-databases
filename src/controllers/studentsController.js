@@ -46,16 +46,102 @@ const getStudent = async (req, res) => {
   }
 };
 
-const createStudent = (req, res) => {
-  return res.send("createStudent");
+const createStudent = async (req, res) => {
+  try {
+    // get payload from request
+    const payload = req.body;
+
+    // validate payload
+    if (!payload.firstName || !payload.lastName) {
+      return res.status(400).json({
+        error: "Failed to create student",
+      });
+    }
+
+    const [result] = await pool.query(
+      "INSERT INTO students (??, ??) VALUES (?, ?)",
+      ["firstName", "lastName", payload.firstName, payload.lastName]
+    );
+
+    return res.status(200).json({
+      data: {
+        id: result.insertId,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status(500).json({
+      error: "Failed to create student",
+    });
+  }
 };
 
-const updateStudent = (req, res) => {
-  return res.send("updateStudent");
+const updateStudent = async (req, res) => {
+  try {
+    // get id from req
+    const { id } = req.params;
+
+    // get payload from request
+    const payload = req.body;
+
+    // validate payload
+    if (!payload.firstName || !payload.lastName) {
+      return res.status(400).json({
+        error: "Failed to update student",
+      });
+    }
+
+    const [result] = await pool.query(
+      "UPDATE students SET ?? = ?, ?? = ? WHERE id = ?",
+      ["firstName", payload.firstName, "lastName", payload.lastName, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        error: "Failed to update student",
+      });
+    }
+
+    return res.status(200).json({
+      data: "Successfully updated student",
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status(500).json({
+      error: "Failed to update student",
+    });
+  }
 };
 
-const deleteStudent = (req, res) => {
-  return res.send("deleteStudent");
+const deleteStudent = async (req, res) => {
+  try {
+    // get id from req
+    const { id } = req.params;
+
+    const [result] = await pool.query("DELETE FROM students WHERE id = ?", [
+      id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        error: "Failed to update student",
+      });
+    }
+
+    return res.status(200).json({
+      data: "Successfully deleted student",
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status(500).json({
+      error: "Failed to delete student",
+    });
+  }
 };
 
 module.exports = {
