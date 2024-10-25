@@ -16,6 +16,7 @@ router.get("/:id", getStudent);
 
 router.post("/", createStudent);
 
+// already have /api/students/:id
 router.put("/:id", updateStudent);
 
 router.delete("/:id", deleteStudent);

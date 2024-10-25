@@ -85,18 +85,19 @@ const updateStudent = async (req, res) => {
     const { id } = req.params;
 
     // get payload from request
-    const payload = req.body;
+    const { attendance } = req.body;
 
-    // validate payload
-    if (!payload.firstName || !payload.lastName) {
+    // validate payload: expecting to receive attendance
+    if (attendance === undefined) {
       return res.status(400).json({
         error: "Failed to update student",
       });
     }
 
+    // update db
     const [result] = await pool.query(
-      "UPDATE students SET ?? = ?, ?? = ? WHERE id = ?",
-      ["firstName", payload.firstName, "lastName", payload.lastName, id]
+      "UPDATE students SET ?? = ? WHERE id = ?",
+      ["attendance", attendance, id]
     );
 
     if (result.affectedRows === 0) {
