@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 const dbOptions = {
   host: "localhost",
   user: "root",
-  password: "password",
+  password: "root",
   database: "students_db",
 };
 
